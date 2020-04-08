@@ -1,0 +1,13 @@
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "resource-group-name": {
+        "value": "bgoo-folding-test"
+      },
+      "resource-group-location": {
+        "value": "southcentralus"
+      }
+    }
+  }

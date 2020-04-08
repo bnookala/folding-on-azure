@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resource-group-location": {
+            "type": "string",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "resource-group-name": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "storage-account-name": "[concat('storage', parameters('resource-group-name'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2019-10-01",
+            "name": "[parameters('resource-group-name')]",
+            "location": "[parameters('resource-group-location')]",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "storageDeployment",
+            "resourceGroup": "[parameters('resource-group-name')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('resource-group-name'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "apiVersion": "2017-10-01",
+                            "name": "[variables('storage-account-name')]",
+                            "location": "[parameters('resource-group-location')]",
+                            "sku": {
+                                "name": "Standard_LRS"
+                            },
+                            "kind": "StorageV2"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
