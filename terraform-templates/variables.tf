@@ -32,3 +32,14 @@ variable "storage_account_name" {
   type = string
 }
 
+variable "fah_team_id" {
+  type = string
+}
+
+variable "fah_user_id" {
+  type = string
+}
+
+variable "fah_user_password" {
+  type = string
+}
