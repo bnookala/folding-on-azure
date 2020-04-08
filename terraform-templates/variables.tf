@@ -4,7 +4,7 @@ variable "batch_account_name" {
 
 variable "batch_pool_display_name" {
   type = string
-  default = "Test Acc Pool Auto"
+  default = "test-folding-pool-display-name"
 }
 
 variable "batch_pool_node_agent_sku_id" {
@@ -23,7 +23,7 @@ variable "resource_group_name" {
   type = string
 }
 
-variable "resource_group_name_location" {
+variable "resource_group_location" {
   type = string
   default = "West US 2"
 }
