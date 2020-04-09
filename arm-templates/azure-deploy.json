@@ -64,37 +64,32 @@
                             "name": "[parameters('batch-account-name')]",
                             "apiVersion": "2015-12-01",
                             "location": "[parameters('resource-group-location')]",
-                            "properties": {
-                                "autoStorage": {
-                                    "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]"
-                                }
-                            },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]"
+                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]",
                             ]
                         },
                         {
                             "type": "Microsoft.Batch/batchAccounts/pools",
-                            "name": "fahpool",
+                            "name": "[concat(parameters('batch-account-name'), '/fahpool')]",
                             "apiVersion": "2020-03-01",
                             "properties": {
-                                "vmSize": "F4s_v2",
+                                "vmSize": "STANDARD_F4S_V2",
                                 "deploymentConfiguration": {
                                     "virtualMachineConfiguration": {
                                         "imageReference": {
-                                            "publisher": "microsoft-azure-batch",
-                                            "offer": "UbuntuServer",
-                                            "sku": "18-04 LTS",
+                                            "publisher": "canonical",
+                                            "offer": "ubuntuserver",
+                                            "sku": "18.04-lts",
                                             "version": "latest"
                                         },
-                                        "nodeAgentSkuId": "batch.node.ubuntu 18-04 LTS"
+                                        "nodeAgentSkuId": "batch.node.ubuntu 18.04"
                                     }
                                 },
                                 "scaleSettings": {
                                     "fixedScale": {
                                         "targetLowPriorityNodes": 5
                                     }
-                                },
+                                }
                             },
                             "dependsOn": [
                                 "[resourceId('Microsoft.batch/batchAccounts', parameters('batch-account-name'))]"
