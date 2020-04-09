@@ -10,6 +10,9 @@
         },
         "resource-group-name": {
             "type": "string"
+        },
+        "batch-account-name": {
+            "type": "string"
         }
     },
     "variables": {
@@ -47,6 +50,55 @@
                                 "name": "Standard_LRS"
                             },
                             "kind": "StorageV2"
+                        },
+                        {
+                            "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+                            "apiVersion": "2019-06-01",
+                            "name": "[concat(variables('storage-account-name'), '/default/fahshare')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]"
+                            ]
+                        },
+                        {
+                            "type": "Microsoft.Batch/batchAccounts",
+                            "name": "[parameters('batch-account-name')]",
+                            "apiVersion": "2015-12-01",
+                            "location": "[parameters('resource-group-location')]",
+                            "properties": {
+                                "autoStorage": {
+                                    "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]"
+                                }
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]"
+                            ]
+                        },
+                        {
+                            "type": "Microsoft.Batch/batchAccounts/pools",
+                            "name": "fahpool",
+                            "apiVersion": "2020-03-01",
+                            "properties": {
+                                "vmSize": "F4s_v2",
+                                "deploymentConfiguration": {
+                                    "virtualMachineConfiguration": {
+                                        "imageReference": {
+                                            "publisher": "microsoft-azure-batch",
+                                            "offer": "UbuntuServer",
+                                            "sku": "18-04 LTS",
+                                            "version": "latest"
+                                        },
+                                        "nodeAgentSkuId": "batch.node.ubuntu 18-04 LTS"
+                                    }
+                                },
+                                "scaleSettings": {
+                                    "fixedScale": {
+                                        "targetLowPriorityNodes": 5
+                                    }
+                                },
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.batch/batchAccounts', parameters('batch-account-name'))]"
+                            ]
                         }
                     ]
                 }
