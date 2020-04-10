@@ -56,14 +56,15 @@ resource "azurerm_batch_pool" "folding" {
   }
 
   start_task {
-    command_line         = `/bin/bash -c 'echo "hello $person $FAHUSER $PASSKEY $TEAM $ENABLE_GPU $ENABLE_SMP" && docker run \
+    command_line         = `/bin/bash -c 'echo "hello $FAHUSER, starting Folding@Home with these params: $FAHUSER $PASSKEY $TEAM $ENABLE_GPU $ENABLE_SMP" && docker run \
   --name "" \
   -p 7396:7396 \
   -p 36330:36330 \
-  -e USER=Anonymous \
-  -e TEAM=0 \
-  -e ENABLE_GPU=false \
-  -e ENABLE_SMP=true \
+  -e PASSKEY=$PASSKEY \
+  -e USER=$FAHUSER \
+  -e TEAM=$TEAM \
+  -e ENABLE_GPU=$ENABLE_GPU \
+  -e ENABLE_SMP=$ENABLE_SMP \
   --restart unless-stopped \
   yurinnick/folding-at-home'`    
     max_task_retry_count = 1
