@@ -19,8 +19,12 @@
 6. Optional: `terraform plan -var-file=terraform.tfvars` to validate
 7. `terraform apply -var-file=terraform.tfvars`
 
-
 ### Resources
 - Azure Batch Pricing: https://azure.microsoft.com/en-us/pricing/details/batch/
 - Folding At Home Docker Image: https://github.com/yurinnick/folding-at-home-docker
 - FAH Docker Image with GPU support: https://github.com/wandhydrant/folding-at-home-docker-gpu
+
+### TODO:
+- Create new docker image with Passkey field
+- investigate initial pool size
+- `docker run yurinnick/folding-at-home:latest --help` for command line options

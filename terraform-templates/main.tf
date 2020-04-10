@@ -56,12 +56,21 @@ resource "azurerm_batch_pool" "folding" {
   }
 
   start_task {
-    command_line         = "echo 'Hello World from $USER'"
+    command_line         = `/bin/bash -c 'echo "hello $person $FAHUSER $PASSKEY $TEAM $ENABLE_GPU $ENABLE_SMP" && docker run \
+  --name "" \
+  -p 7396:7396 \
+  -p 36330:36330 \
+  -e USER=Anonymous \
+  -e TEAM=0 \
+  -e ENABLE_GPU=false \
+  -e ENABLE_SMP=true \
+  --restart unless-stopped \
+  yurinnick/folding-at-home'`    
     max_task_retry_count = 1
     wait_for_success     = true
 
     environment = {
-      USER        = var.fah_user_id
+      FAHUSER     = var.fah_user_id
       PASSKEY     = var.fah_user_password
       TEAM        = var.fah_team_id
       ENABLE_GPU  = var.fah_enable_gpu
@@ -70,8 +79,8 @@ resource "azurerm_batch_pool" "folding" {
 
     user_identity {
       auto_user {
-        elevation_level = "NonAdmin"
-        scope           = "Task"
+        elevation_level = "Admin" // Admin for running docker commands
+        scope           = "Pool"
       }
     }
   }
