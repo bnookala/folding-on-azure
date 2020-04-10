@@ -33,18 +33,11 @@ resource "azurerm_batch_pool" "folding" {
   vm_size             = var.batch_pool_vm_size
   node_agent_sku_id   = var.batch_pool_node_agent_sku_id 
 
-#   auto_scale {
-#     evaluation_interval = "PT15M"
-
-#     formula = <<EOF
-#       startingNumberOfVMs = 1;
-#       maxNumberofVMs = 25;
-#       pendingTaskSamplePercent = $PendingTasks.GetSamplePercent(180 * TimeInterval_Second);
-#       pendingTaskSamples = pendingTaskSamplePercent < 70 ? startingNumberOfVMs : avg($PendingTasks.GetSample(180 *   TimeInterval_Second));
-#       $TargetDedicatedNodes=min(maxNumberofVMs, pendingTaskSamples);
-# EOF
-
-#   }
+  fixed_scale {
+    target_dedicated_nodes    = var.scale_dedicated_nodes
+    target_low_priority_nodes = var.scale_low_priority_nodes
+    resize_timeout            = "PT15M"
+  }
 
   storage_image_reference {
     publisher = "microsoft-azure-batch"
@@ -56,15 +49,14 @@ resource "azurerm_batch_pool" "folding" {
   container_configuration {
     type = "DockerCompatible"
     container_registries {
-      registry_server = "docker.io"
-      user_name       = "login"
-      password        = "apassword"
+      registry_server = var.container_registry
+      user_name       = var.container_user_id
+      password        = var.container_user_password
     }
   }
 
   start_task {
-    # command_line         = "echo 'Hello World from $env'"
-    command_line         = "docker run --name folding-at-home -p 7396:7396 -p 36330:36330 -e USER=Anonymous -e TEAM=0 -e ENABLE_GPU=false -e ENABLE_SMP=true --restart unless-stopped yurinnick/folding-at-home"
+    command_line         = "echo 'Hello World from $USER'"
     max_task_retry_count = 1
     wait_for_success     = true
 
@@ -83,9 +75,4 @@ resource "azurerm_batch_pool" "folding" {
       }
     }
   }
-
-#   certificate {
-#     id         = azurerm_batch_certificate.example.id
-#     visibility = ["StartTask"]
-#   }
 }
