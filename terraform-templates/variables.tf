@@ -15,8 +15,8 @@ variable "batch_pool_node_agent_sku_id" {
 
 variable "batch_pool_vm_size" {
   type = string
-  default = "Standard_A1"
-  # default = "Standard_F4s"
+  # default = "Standard_A1"
+  default = "Standard_F4s"
 }
 
 variable "resource_group_name" {
@@ -32,14 +32,27 @@ variable "storage_account_name" {
   type = string
 }
 
+variable "fah_enable_gpu" {
+  type = bool
+  default = false
+}
+
+variable "fah_enable_smp" {
+  type = bool
+  default = true
+}
+
 variable "fah_team_id" {
-  type = string
+  type = number
+  default = 0
 }
 
 variable "fah_user_id" {
   type = string
+  default = "Anonymous"
 }
 
 variable "fah_user_password" {
   type = string
+  default = ""
 }

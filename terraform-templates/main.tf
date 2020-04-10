@@ -63,12 +63,17 @@ resource "azurerm_batch_pool" "folding" {
   }
 
   start_task {
-    command_line         = "echo 'Hello World from $env'"
+    # command_line         = "echo 'Hello World from $env'"
+    command_line         = "docker run --name folding-at-home -p 7396:7396 -p 36330:36330 -e USER=Anonymous -e TEAM=0 -e ENABLE_GPU=false -e ENABLE_SMP=true --restart unless-stopped yurinnick/folding-at-home"
     max_task_retry_count = 1
     wait_for_success     = true
 
     environment = {
-      env = "TEST"
+      USER        = var.fah_user_id
+      PASSKEY     = var.fah_user_password
+      TEAM        = var.fah_team_id
+      ENABLE_GPU  = var.fah_enable_gpu
+      ENABLE_SMP  = var.fah_enable_smp
     }
 
     user_identity {
