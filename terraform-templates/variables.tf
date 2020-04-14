@@ -21,10 +21,10 @@ variable "batch_pool_vm_size" {
   # default = "Standard_D4_v3"
 }
 
-variable "container_registry" {
-  type = string
-  default = "docker.io"
-}
+# variable "container_registry" {
+#   type = string
+#   default = "docker.io"
+# }
 
 # variable "container_user_id" {
 #   type = string
@@ -51,7 +51,7 @@ variable "scale_dedicated_nodes" {
 
 variable "scale_low_priority_nodes" {
   type = number
-  default = 2
+  default = 5
 }
 
 variable "storage_account_name" {
