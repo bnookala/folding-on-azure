@@ -46,14 +46,14 @@ resource "azurerm_batch_pool" "folding" {
     version   = "latest"
   }
 
-  container_configuration {
-    type = "DockerCompatible"
-    container_registries {
-      registry_server = var.container_registry
-      user_name       = var.container_user_id
-      password        = var.container_user_password
-    }
-  }
+  # container_configuration {
+  #   type = "DockerCompatible"
+  #   container_registries {
+  #     registry_server = var.container_registry
+  #     user_name       = var.container_user_id
+  #     password        = var.container_user_password
+  #   }
+  # }
 
   start_task {
     command_line         = `/bin/bash -c 'echo "hello $FAHUSER, starting Folding@Home with these params: $FAHUSER $PASSKEY $TEAM $ENABLE_GPU $ENABLE_SMP" && docker run \

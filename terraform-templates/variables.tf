@@ -26,13 +26,13 @@ variable "container_registry" {
   default = "docker.io"
 }
 
-variable "container_user_id" {
-  type = string
-}
+# variable "container_user_id" {
+#   type = string
+# }
 
-variable "container_user_password" {
-  type = string
-}
+# variable "container_user_password" {
+#   type = string
+# }
 
 variable "resource_group_name" {
   type = string
