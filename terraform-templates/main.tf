@@ -1,5 +1,4 @@
 provider "azurerm" {
-#   version = "~>1.44.0"
   version = "=2.0.0"
   features {}
 }
@@ -46,27 +45,8 @@ resource "azurerm_batch_pool" "folding" {
     version   = "latest"
   }
 
-  # container_configuration {
-  #   type = "DockerCompatible"
-  #   container_registries {
-  #     registry_server = var.container_registry
-  #     user_name       = var.container_user_id
-  #     password        = var.container_user_password
-  #   }
-  # }
-
   start_task {
-    command_line         = `/bin/bash -c 'echo "hello $FAHUSER, starting Folding@Home with these params: $FAHUSER $PASSKEY $TEAM $ENABLE_GPU $ENABLE_SMP" && docker run \
-  --name "" \
-  -p 7396:7396 \
-  -p 36330:36330 \
-  -e PASSKEY=$PASSKEY \
-  -e USER=$FAHUSER \
-  -e TEAM=$TEAM \
-  -e ENABLE_GPU=$ENABLE_GPU \
-  -e ENABLE_SMP=$ENABLE_SMP \
-  --restart unless-stopped \
-  yurinnick/folding-at-home'`    
+    command_line         = "/bin/bash -c docker run --name '' -p 7396:7396 -p 36330:36330 -e PASSKEY=$PASSKEY -e USER=$FAHUSER -e TEAM=$TEAM -e ENABLE_GPU=$ENABLE_GPU -e ENABLE_SMP=$ENABLE_SMP --restart unless-stopped yurinnick/folding-at-home"
     max_task_retry_count = 1
     wait_for_success     = true
 

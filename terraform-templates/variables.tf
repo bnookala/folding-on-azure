@@ -15,24 +15,8 @@ variable "batch_pool_node_agent_sku_id" {
 
 variable "batch_pool_vm_size" {
   type = string
-  # default = "Standard_A1"
-  # default = "Standard_F4s"
   default = "Standard_F4s_v2"
-  # default = "Standard_D4_v3"
 }
-
-# variable "container_registry" {
-#   type = string
-#   default = "docker.io"
-# }
-
-# variable "container_user_id" {
-#   type = string
-# }
-
-# variable "container_user_password" {
-#   type = string
-# }
 
 variable "resource_group_name" {
   type = string
@@ -70,7 +54,7 @@ variable "fah_enable_smp" {
 
 variable "fah_team_id" {
   type = number
-  default = 0
+  default = 260105 // MSFT Azure Fold - https://stats.foldingathome.org/team/260105 - Rename to VisualStudio Azure Fold?
 }
 
 variable "fah_user_id" {
