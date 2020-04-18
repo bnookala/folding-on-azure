@@ -1,5 +1,4 @@
 provider "azurerm" {
-#   version = "~>1.44.0"
   version = "=2.0.0"
   features {}
 }
@@ -33,18 +32,11 @@ resource "azurerm_batch_pool" "folding" {
   vm_size             = var.batch_pool_vm_size
   node_agent_sku_id   = var.batch_pool_node_agent_sku_id 
 
-#   auto_scale {
-#     evaluation_interval = "PT15M"
-
-#     formula = <<EOF
-#       startingNumberOfVMs = 1;
-#       maxNumberofVMs = 25;
-#       pendingTaskSamplePercent = $PendingTasks.GetSamplePercent(180 * TimeInterval_Second);
-#       pendingTaskSamples = pendingTaskSamplePercent < 70 ? startingNumberOfVMs : avg($PendingTasks.GetSample(180 *   TimeInterval_Second));
-#       $TargetDedicatedNodes=min(maxNumberofVMs, pendingTaskSamples);
-# EOF
-
-#   }
+  fixed_scale {
+    target_dedicated_nodes    = var.scale_dedicated_nodes
+    target_low_priority_nodes = var.scale_low_priority_nodes
+    resize_timeout            = "PT15M"
+  }
 
   storage_image_reference {
     publisher = "microsoft-azure-batch"
@@ -53,34 +45,24 @@ resource "azurerm_batch_pool" "folding" {
     version   = "latest"
   }
 
-  container_configuration {
-    type = "DockerCompatible"
-    container_registries {
-      registry_server = "docker.io"
-      user_name       = "login"
-      password        = "apassword"
-    }
-  }
-
   start_task {
-    command_line         = "echo 'Hello World from $env'"
+    command_line         = "/bin/bash -c docker run --name '' -p 7396:7396 -p 36330:36330 -e PASSKEY=$PASSKEY -e USER=$FAHUSER -e TEAM=$TEAM -e ENABLE_GPU=$ENABLE_GPU -e ENABLE_SMP=$ENABLE_SMP --restart unless-stopped yurinnick/folding-at-home"
     max_task_retry_count = 1
     wait_for_success     = true
 
     environment = {
-      env = "TEST"
+      FAHUSER     = var.fah_user_id
+      PASSKEY     = var.fah_user_password
+      TEAM        = var.fah_team_id
+      ENABLE_GPU  = var.fah_enable_gpu
+      ENABLE_SMP  = var.fah_enable_smp
     }
 
     user_identity {
       auto_user {
-        elevation_level = "NonAdmin"
-        scope           = "Task"
+        elevation_level = "Admin" // Admin for running docker commands
+        scope           = "Pool"
       }
     }
   }
-
-#   certificate {
-#     id         = azurerm_batch_certificate.example.id
-#     visibility = ["StartTask"]
-#   }
 }
