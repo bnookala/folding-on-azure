@@ -13,6 +13,22 @@
         },
         "batch-account-name": {
             "type": "string"
+        },
+        "node-count": {
+            "type": "int",
+            "minValue": 1
+        },
+        "folding-at-home-userid": {
+            "type": "string"
+        },
+        "folding-at-home-teamid": {
+            "type": "string",
+            "defaultValue": "260105"
+        },
+        "folding-at-home-url": {
+            "type": "string",
+            "defaultValue": "
+https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.5/latest.tar.bz2"
         }
     },
     "variables": {
@@ -23,9 +39,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2019-10-01",
             "name": "[parameters('resource-group-name')]",
-            "location": "[parameters('resource-group-location')]",
-            "properties": {
-            }
+            "location": "[parameters('resource-group-location')]"
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -64,8 +78,13 @@
                             "name": "[parameters('batch-account-name')]",
                             "apiVersion": "2015-12-01",
                             "location": "[parameters('resource-group-location')]",
+                            "properties": {
+                                "autoStorage": {
+                                    "storageAccountId": "[subscriptionResourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]"
+                                }
+                            },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]",
+                                "[subscriptionResourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]"
                             ]
                         },
                         {
@@ -87,11 +106,30 @@
                                 },
                                 "scaleSettings": {
                                     "fixedScale": {
-                                        "targetLowPriorityNodes": 5
+                                        "targetLowPriorityNodes": "[parameters('node-count')]"
                                     }
+                                },
+                                "startTask": {
+                                    "commandLine": "/bin/bash -c 'export
+                                    wget https://raw.githubusercontent.com/bnookala/folding-on-azure/master/scripts/setup_folding.sh; chmod u+x setup_folding.sh; ./setup_folding.sh;'",
+                                    "environmentSettings": [
+                                        {
+                                            "name": "SHARE_NAME",
+                                            "value": "fahshare"
+                                        },
+                                        {
+                                            "name": "STORAGE_ACCOUNT",
+                                            "value": "[variables('storage-account-name')]"
+                                        },
+                                        {
+                                            "name": "FOLDING_URL",
+                                            "value": "[parameters('folding-at-home-url')]"
+                                        }
+                                    ]
                                 }
                             },
                             "dependsOn": [
+                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]",
                                 "[resourceId('Microsoft.batch/batchAccounts', parameters('batch-account-name'))]"
                             ]
                         }
